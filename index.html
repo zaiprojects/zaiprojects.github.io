@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+	<style>
+		@import url('https://fonts.googleapis.com/css2?family=Lexend&display=swap');
+
+		body {
+			font-family: 'Lexend', sans-serif;
+			color: white;
+			background-color: black;
+		}
+
+		.star {
+			position: fixed;
+			width: 2px;
+			height: 2px;
+			background: white;
+			border-radius: 50%;
+			opacity: 0;
+			animation: flicker var(--duration) infinite;
+			pointer-events: none;
+			
+			animation:
+			flicker var(--duration) infinite,
+			drift 20s linear infinite;
+		}
+
+		@keyframes flicker {
+			0% { opacity: 0; }
+			10% { opacity: 1; }
+			20% { opacity: 0; }
+			40% { opacity: 0.8; }
+			60% { opacity: 0; }
+			100% { opacity: 1; }
+		}
+		
+		@keyframes drift {
+			from { transform: translateY(0px); }
+			to { transform: translateY(10px); }
+		}		
+
+		#content {
+			opacity: 0;
+			transition: opacity 1.5s ease;
+		}
+		
+		.glitch {
+			position: relative;
+			display: inline-block;
+			line-height: 1;
+		}
+
+		.glitch::before,
+		.glitch::after {
+			content: attr(data-text);
+			position: absolute;
+			left: 0;
+			top: 0;
+			width: 100%;
+			overflow: hidden;
+			color: white;
+		}
+
+		.glitch::before {
+			left: 2px;
+			text-shadow: -2px 0 pink;
+			animation: glitch1 2s infinite linear alternate-reverse;
+		}
+
+		.glitch::after {
+			left: -2px;
+			text-shadow: 2px 0 purple;
+			animation: glitch2 2s infinite linear alternate-reverse;
+		}
+
+		@keyframes glitch1 {
+			0% { transform: translate(0); opacity: 1; }
+			20% { transform: translate(-2px, 1px); opacity: 0.8; }
+			40% { transform: translate(2px, -1px); opacity: 1; }
+			60% { transform: translate(-1px, 2px); opacity: 0.7; }
+			100% { transform: translate(0); opacity: 1; }
+		}
+
+		@keyframes glitch2 {
+			0% { transform: translate(0); }
+			25% { transform: translate(2px, -1px); }
+			50% { transform: translate(-2px, 1px); }
+			75% { transform: translate(1px, 2px); }
+			100% { transform: translate(0); }
+		}
+
+		.void-button {
+				font-family: 'Lexend', sans-serif;
+				font-size: 24px;
+				padding: 10px 20px;
+				background: white;
+				color: black;
+				border: none;
+				cursor: pointer;
+		}
+	</style>
+
+	<body>
+		<div id="startScreen" style="text-align: center; margin-top: 200px;">
+			<button id="startBtn" class="void-button">
+				Begin.
+			</button>
+			<p>*please turn on audio & enter fullscreen with the F11 key*</p>
+		</div>
+	
+		<div id="content" style="display: none;">
+			<div style="margin: auto; width: 300px; margin-top: 10px; text-align: center;">
+				<h1 class="glitch" data-text="Introduction">Introduction</h1>
+			</div>
+			
+			<div style="margin: auto; width: 30%; margin-top: 40px; text-align: center;">
+				<p>
+					<b style="font-size: 20px">Contents<br></b>
+					This website contains sections of multimedia content paired with explanations of their significance.<br><br>
+					These “artifacts” are intended to communicate my personal worldview to the viewer through more than words alone.<br><br>
+					As a secondary goal, I hope to tell a pseudostory throughout the website, so the reader not only understands my worldview, but experiences some of the emotions that I have experienced.<br><br>
+					WARNING: This website contains flashing lights and occasional disturbing language.<br>
+				</p>
+			</div>
+			
+			<div style="margin: auto; width: 60%; margin-top: 40px; text-align: center;">
+				<p>
+					<b style="font-size: 20px">Artifacts<br></b>
+					The layout of my website is fairly normal.<br><br>
+					Each artifact is a seperate webpage, and each one will contain a link to the next.<br><br>
+					The order of the artifacts is based on their level of abstraction.<br><br>
+					I would highly encourage that the artifacts be observed in this order for the sake of both comprehension and immersion.<br><br>
+					I intend to be very deliberate with their placement.<br><br>
+					Additionally, I do not recommend doing a full walkthrough of the website before reading, as I will be using the progress through the webpage to possibly trigger some artistic effects that will be best saved for the right moment in the readings.<br>
+				</p>
+			</div>
+			
+			<div style="margin: auto; width: 90%; margin-top: 40px; text-align: center;">
+				<p>
+					<b style="font-size: 20px">Guidance and Acknowldegement<br></b>
+					I understand that this whole concept is a bit self-indulgent, and the reader may, at times, disagree with my sentiments or become confused with my logic.<br><br>
+					While I will do my best to express my thoughts effectively, I ask you to read this webpage with either an open mind, or a curiosity to learn.<br>
+					As a final thought, please understand that the communication style in each level of this website changes.<br><br>
+					The thoughts and sentences will become more abstract as the experience progresses.
+				</p>
+			</div>
+			
+			<div id="nextButton" style="margin-top: 30px; text-align: center; display: none;">
+				<button class="void-button" onclick="location.href='Artifact1.html'">
+					Continue.
+				</button>
+			</div>
+		</div>
+		
+
+<audio id="bg" loop>
+<source src="Enchantress.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+  const btn = document.getElementById("startBtn");
+  const content = document.getElementById("content");
+  const audio = document.getElementById("bg");
+
+  function createStars(count) {
+    for (let i = 0; i < count; i++) {
+      const star = document.createElement("div");
+      star.className = "star";
+
+      // random position
+      star.style.left = Math.random() * window.innerWidth + "px";
+      star.style.top = Math.random() * window.innerHeight + "px";
+
+      // random size
+      const size = 1 + Math.random() * 2;
+      star.style.width = size + "px";
+      star.style.height = size + "px";
+
+      // random flicker speed
+      star.style.setProperty("--duration", (1 + Math.random() * 3) + "s");
+
+      document.body.appendChild(star);
+    }
+  }
+
+  btn.addEventListener("click", () => {
+    // hide start screen
+    document.getElementById("startScreen").style.display = "none";
+
+    // show content
+    content.style.display = "block";
+    setTimeout(() => {
+      content.style.opacity = 1;
+    }, 50);
+
+    // show continue button
+    document.getElementById("nextButton").style.display = "block";
+
+    // spawn stars AFTER begin
+    setTimeout(() => {
+      createStars(80);
+    }, 300);
+
+    // audio setup + fade in
+    audio.volume = 0;
+    audio.play();
+
+    let volume = 0;
+    const fade = setInterval(() => {
+      volume = Math.min(volume + 0.02, 1);
+      audio.volume = volume;
+
+      if (volume >= 1) clearInterval(fade);
+    }, 100);
+  });
+</script>
+
+	</body>
+</html>
