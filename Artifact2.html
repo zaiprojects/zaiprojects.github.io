@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Lexend&display=swap');
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Lexend', sans-serif;
+      color: white;
+      background-color: black;
+      background-attachment: fixed;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      overflow-x: hidden;
+      transition: background-image 0.1s;
+      text-shadow: 0 1px 16px rgba(0,0,0,1), 0 0 40px rgba(0,0,0,0.95);
+    }
+
+    #startScreen {
+      text-align: center;
+      margin-top: 200px;
+    }
+
+    .void-button {
+      font-family: 'Lexend', sans-serif;
+      font-size: 24px;
+      padding: 10px 20px;
+      background: white;
+      color: black;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    #startScreen p {
+      margin-top: 20px;
+      font-size: 14px;
+    }
+
+    #content {
+      opacity: 0;
+      transition: opacity 1.5s ease;
+      display: none;
+    }
+
+    #playerSection {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 100px 40px 80px;
+      min-height: 100vh;
+    }
+
+    #nowPlaying {
+      font-size: 13px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      opacity: 0.4;
+      margin-bottom: 12px;
+      height: 16px;
+    }
+
+    #trackTitle {
+      font-size: 28px;
+      margin-bottom: 60px;
+      min-height: 36px;
+      text-align: center;
+    }
+
+    #recordWrap {
+      position: relative;
+      width: 260px;
+      height: 260px;
+      margin-bottom: 60px;
+    }
+
+    #record {
+      width: 260px;
+      height: 260px;
+      border-radius: 50%;
+      background: url('cover.png') center/cover no-repeat;
+      position: relative;
+      animation: spin 3s linear infinite;
+      animation-play-state: paused;
+      will-change: transform;
+      overflow: hidden;
+    }
+
+    #record.playing {
+      animation-play-state: running;
+    }
+
+    #tonearm {
+      position: absolute;
+      top: -10px;
+      right: -30px;
+      width: 90px;
+      height: 4px;
+      background: #666;
+      border-radius: 2px;
+      transform-origin: right center;
+      transform: rotate(-30deg);
+      transition: transform 0.8s ease;
+    }
+    #tonearm.playing { transform: rotate(-18deg); }
+
+    #tonearm::after {
+      content: '';
+      position: absolute;
+      left: -6px; top: 50%;
+      transform: translateY(-50%);
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: #888;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+
+    #controls {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      margin-bottom: 70px;
+    }
+
+    .ctrl-btn {
+      font-family: 'Lexend', sans-serif;
+      font-size: 13px;
+      letter-spacing: 0.15em;
+      background: transparent;
+      color: white;
+      border: 1px solid rgba(255,255,255,0.25);
+      padding: 8px 20px;
+      cursor: pointer;
+      transition: border-color 0.2s, opacity 0.2s;
+      opacity: 0.6;
+    }
+    .ctrl-btn:hover { opacity: 1; border-color: white; }
+
+    #playBtn {
+      font-size: 15px;
+      padding: 10px 28px;
+      opacity: 1;
+      border-color: rgba(255,255,255,0.5);
+    }
+
+    #progressWrap {
+      width: 280px;
+      margin-bottom: 8px;
+    }
+    #progressBar {
+      width: 100%;
+      height: 2px;
+      background: rgba(255,255,255,0.15);
+      cursor: pointer;
+      position: relative;
+    }
+    #progressFill {
+      height: 100%;
+      background: white;
+      width: 0%;
+      transition: width 0.25s linear;
+    }
+    #timeDisplay {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      opacity: 0.35;
+      margin-top: 6px;
+    }
+
+    #songList {
+      width: 100%;
+      max-width: 520px;
+    }
+
+    #songList h2 {
+      font-size: 11px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      opacity: 0.35;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .song-row {
+      display: flex;
+      align-items: center;
+      padding: 14px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      cursor: pointer;
+      transition: opacity 0.2s;
+      gap: 16px;
+    }
+    .song-row:first-of-type { border-top: 1px solid rgba(255,255,255,0.07); }
+    .song-row:hover { opacity: 0.7; }
+    .song-row.active { opacity: 1; }
+    .song-row.active .song-num { opacity: 0; }
+    .song-row.active .song-indicator { opacity: 1; }
+
+    .song-num {
+      font-size: 12px;
+      opacity: 0.3;
+      width: 20px;
+      text-align: right;
+      flex-shrink: 0;
+      transition: opacity 0.2s;
+    }
+
+
+    .song-indicator {
+      width: 20px;
+      height: 16px;
+      flex-shrink: 0;
+      position: absolute;
+      display: flex;
+      align-items: flex-end;
+      gap: 2px;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .song-row { position: relative; }
+
+    .bar {
+      width: 3px;
+      background: white;
+      border-radius: 1px;
+    }
+    .bar1 { animation: bounce1 0.6s ease-in-out infinite alternate; }
+    .bar2 { animation: bounce2 0.5s ease-in-out infinite alternate; }
+    .bar3 { animation: bounce3 0.7s ease-in-out infinite alternate; }
+    .bar4 { animation: bounce4 0.4s ease-in-out infinite alternate; }
+
+    @keyframes bounce1 { from { height: 4px; } to { height: 14px; } }
+    @keyframes bounce2 { from { height: 8px; } to { height: 6px; } }
+    @keyframes bounce3 { from { height: 3px; } to { height: 12px; } }
+    @keyframes bounce4 { from { height: 10px; } to { height: 4px; } }
+
+    .song-name {
+      font-size: 16px;
+      flex: 1;
+    }
+
+    .song-duration {
+      font-size: 12px;
+      opacity: 0.3;
+      flex-shrink: 0;
+    }
+
+    #afterSection {
+      opacity: 0;
+      transition: opacity 2s ease;
+      padding: 0 0 120px;
+    }
+    #afterSection.visible { opacity: 1; }
+
+    #afterSection .inner {
+      width: 60%;
+      margin: 80px auto;
+      font-size: 18px;
+      line-height: 1.6;
+    }
+
+    .glitch {
+      position: relative;
+      display: inline-block;
+      line-height: 1;
+    }
+    .glitch::before,
+    .glitch::after {
+      content: attr(data-text);
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      overflow: hidden;
+      color: white;
+    }
+    .glitch::before {
+      left: 2px;
+      text-shadow: -2px 0 pink;
+      animation: glitch1 2s infinite linear alternate-reverse;
+    }
+    .glitch::after {
+      left: -2px;
+      text-shadow: 2px 0 purple;
+      animation: glitch2 2s infinite linear alternate-reverse;
+    }
+    @keyframes glitch1 {
+      0%   { transform: translate(0);         opacity: 1; }
+      20%  { transform: translate(-2px, 1px); opacity: 0.8; }
+      40%  { transform: translate(2px, -1px); opacity: 1; }
+      60%  { transform: translate(-1px, 2px); opacity: 0.7; }
+      100% { transform: translate(0);         opacity: 1; }
+    }
+    @keyframes glitch2 {
+      0%   { transform: translate(0); }
+      25%  { transform: translate(2px, -1px); }
+      50%  { transform: translate(-2px, 1px); }
+      75%  { transform: translate(1px, 2px); }
+      100% { transform: translate(0); }
+    }
+
+    #continueBtn {
+      display: none;
+      text-align: center;
+      padding: 20px 0 120px;
+    }
+    #continueBtn.visible { display: block; }
+  </style>
+</head>
+
+<body>
+
+<div id="startScreen">
+  <button id="startBtn" class="void-button">Listen.</button>
+  <p style="font-size: large;">"I don't even want to leave it. This is the best option for me."</p>
+</div>
+
+<div id="content">
+
+  <div id="playerSection">
+
+    <div style="text-align:center; margin-bottom: 60px;">
+      <h1 class="glitch" data-text="The Illusion Tale" style="font-size: 20px;">The Illusion Tale</h1>
+    </div>
+
+    <div id="nowPlaying"></div>
+    <div id="trackTitle"></div>
+
+    <div id="recordWrap">
+      <div id="record"></div>
+      <div id="tonearm"></div>
+    </div>
+
+    <div id="progressWrap">
+      <div id="progressBar">
+        <div id="progressFill"></div>
+      </div>
+      <div id="timeDisplay">
+        <span id="timeCurrent">0:00</span>
+        <span id="timeTotal">0:00</span>
+      </div>
+    </div>
+
+    <div id="controls">
+      <button class="ctrl-btn" id="prevBtn">prev</button>
+      <button class="ctrl-btn" id="playBtn">play</button>
+      <button class="ctrl-btn" id="nextBtn">next</button>
+    </div>
+
+    <div id="songList">
+      <h2>Tracks</h2>
+      <!-- rows injected by JS -->
+    </div>
+
+  </div>
+
+  <div id="afterSection">
+    <div class="inner">
+      The Illusion Tale is an album I released under the artist name Absinθ. It consists of 10 instrumental songs of various genres. The creation of this album was a complex process that took a couple of months. In contrast to my poetry, these songs tell a much more complete story and express a wider range of emotions. The album’s theming slowly morphs throughout, it starts in despair, moves towards happier melodies, crashes with an intense moment, and mellows out near the end. It is deliberately meant to be repeatable without any jumps in mood. There is also an eleventh track which will be discussed in more detail later.<br><br>
+
+      While I have created other musical creations, The Illusion Tale is the one that has the most inspiration from my worldview. The powerlessness I feel in the face of the capabilities of my own mind was the main theme, but each section also represented a separate emotion. Occasionally that emotion is obvious in its portrayal. However, for some of the songs, I cannot even grasp the meaning or emotion they were trying to portray because I am unable to grasp who I was when they were written. This preservation effect is why I enjoy art. To me, the only way to keep the “Ego” of the moment alive is to create a screenshot of how I feel. Words decay. Despite being created for the express purpose of communication, they seem to lose their meaning as time moves on. This is true of all linguistic processes, but I experience it on an instantaneous scale. As soon as the words arrive on a page, they become of that page and not of myself.  This is why I learnt how to express myself through other means than words. This is why a moment means more to me than a sentence. This is why I am the way I am. <br><br>
+
+      Or maybe not.<br><br>
+
+      Perhaps I should discuss the actual contents of the album. The first song is called despair. As you may have guessed, it was made to represent the downturn you feel when an idea you were entirely oriented around, leaves. It is that emptiness which remains when your worldview shatters for the millionth time. You are just left there, surrounded by broken shards of your happiness. It’s not a time to cry. All you can do is mourn. It’s in this mourning where you become the most hyper aware of the insanity of your mind, which is represented in the second song. The third and fourth songs are about the sense of bargaining that emerges in those moments. The desire to regain some kind of motivation for life, and it does reappear. Song five is the high point. It is the destination that we are always seeking for. It is the moment where you thought you have achieved meaning. It doesn’t last. The reality is the search is what takes up 90% of our time. I realize something is wrong, and I begin to become frightened. Song six describes the realization, and song seven describes the fear. That fear is meant to be the climax of the album. The first six songs are written with traditional melodies and chords, but the seventh breaks down into pure chaos. Notes jump and play with no rhythm or reason as the idea collapses. Once again, I am in the darkness. I continue to fall. However, when the bottom is reached, there is a difference. The album begins with despair, but it ends with simple sobriety. Losing your way gives you the ability to see more clearly. The storm is over and you can take a moment to admire the petrichor smell in the air. <br><br>
+
+      The extralude at the end of the album is the most direct part. A robotic voice utters the only words on the album. <br><br>
+
+      “What a cruel cycle.”<br><br>
+      “I don’t even want to leave it.”<br><br>
+      “This is the best option for me.”<br><br><br><br><br><br><br><br><br><br>
+
+
+
+
+
+      And then the album repeats.<br>
+
+    </div>
+  </div>
+
+  <div id="continueBtn">
+    <button class="void-button" onclick="location.href='Artifact3.html'">Continue.</button>
+  </div>
+
+</div>
+
+<audio id="player"></audio>
+
+<script>
+// ── Song list — edit filenames and display names here ──
+const songs = [
+  { file: "1-Despair.ogg", name: "Despair",   duration: "3:00" },
+  { file: "2-The Mad Hatter.ogg", name: "The Mad Hatter",   duration: "2:07" },
+  { file: "3-Ink-line.ogg", name: "Ink-line", duration: "2:20" },
+  { file: "4-A Stay Wish.ogg", name: "A Stay Wish",  duration: "2:32" },
+  { file: "5-Melody Plays.ogg", name: "Melody Plays",  duration: "1:55" },
+  { file: "6-Tunnel Through.ogg", name: "Tunnel Through",  duration: "2:54" },
+  { file: "7-Searching.ogg", name: "Searching",  duration: "2:06" },
+  { file: "8-Uh Oh.ogg", name: "Uh Oh",  duration: "0:48" },
+  { file: "9-Hold, Please.ogg", name: "Hold, Please",  duration: "2:00" },
+  { file: "10-The Rain Had Stopped.ogg", name: "The Rain Had Stopped",  duration: "2:34" },
+];
+
+// ── State ──
+let currentIndex = -1;
+let isPlaying = false;
+
+// ── Elements ──
+const audio       = document.getElementById("player");
+const record      = document.getElementById("record");
+const tonearm     = document.getElementById("tonearm");
+const nowPlaying  = document.getElementById("nowPlaying");
+const trackTitle  = document.getElementById("trackTitle");
+const playBtn     = document.getElementById("playBtn");
+const prevBtn     = document.getElementById("prevBtn");
+const nextBtn     = document.getElementById("nextBtn");
+const progressBar = document.getElementById("progressBar");
+const progressFill= document.getElementById("progressFill");
+const timeCurrent = document.getElementById("timeCurrent");
+const timeTotal   = document.getElementById("timeTotal");
+const songListEl  = document.getElementById("songList");
+const afterSection= document.getElementById("afterSection");
+
+// ── Build song rows ──
+songs.forEach((song, i) => {
+  const row = document.createElement("div");
+  row.className = "song-row";
+  row.dataset.index = i;
+  row.innerHTML = `
+    <span class="song-num">${i + 1}</span>
+    <div class="song-indicator">
+      <div class="bar bar1" style="height:4px"></div>
+      <div class="bar bar2" style="height:8px"></div>
+      <div class="bar bar3" style="height:6px"></div>
+      <div class="bar bar4" style="height:10px"></div>
+    </div>
+    <span class="song-name">${song.name}</span>
+    <span class="song-duration">${song.duration}</span>
+  `;
+  row.addEventListener("click", () => loadAndPlay(i));
+  songListEl.appendChild(row);
+});
+
+// ── Helpers ──
+function formatTime(s) {
+  if (isNaN(s)) return "0:00";
+  const m = Math.floor(s / 60);
+  const sec = Math.floor(s % 60);
+  return `${m}:${sec.toString().padStart(2, "0")}`;
+}
+
+function setActiveRow(index) {
+  document.querySelectorAll(".song-row").forEach((r, i) => {
+    r.classList.toggle("active", i === index);
+  });
+}
+
+function loadAndPlay(index) {
+  currentIndex = index;
+  const song = songs[index];
+  audio.src = song.file;
+  audio.play();
+  isPlaying = true;
+
+  nowPlaying.textContent = "Now playing";
+  trackTitle.textContent = song.name;
+  playBtn.textContent = "pause";
+
+  record.classList.add("playing");
+  tonearm.classList.add("playing");
+
+  setActiveRow(index);
+  revealAfter();
+}
+
+function togglePlay() {
+  if (currentIndex === -1) { loadAndPlay(0); return; }
+  if (isPlaying) {
+    audio.pause();
+    isPlaying = false;
+    playBtn.textContent = "play";
+    record.classList.remove("playing");
+    tonearm.classList.remove("playing");
+  } else {
+    audio.play();
+    isPlaying = true;
+    playBtn.textContent = "pause";
+    record.classList.add("playing");
+    tonearm.classList.add("playing");
+  }
+}
+
+function prevTrack() {
+  if (currentIndex <= 0) loadAndPlay(songs.length - 1);
+  else loadAndPlay(currentIndex - 1);
+}
+
+function nextTrack() {
+  if (currentIndex >= songs.length - 1) loadAndPlay(0);
+  else loadAndPlay(currentIndex + 1);
+}
+
+audio.addEventListener("timeupdate", () => {
+  if (!audio.duration) return;
+  const pct = (audio.currentTime / audio.duration) * 100;
+  progressFill.style.width = pct + "%";
+  timeCurrent.textContent = formatTime(audio.currentTime);
+  timeTotal.textContent = formatTime(audio.duration);
+});
+
+progressBar.addEventListener("click", (e) => {
+  if (!audio.duration) return;
+  const rect = progressBar.getBoundingClientRect();
+  const ratio = (e.clientX - rect.left) / rect.width;
+  audio.currentTime = ratio * audio.duration;
+});
+
+audio.addEventListener("ended", () => {
+  nextTrack();
+});
+
+// ── After section ──
+let afterRevealed = false;
+function revealAfter() {
+  if (afterRevealed) return;
+  afterRevealed = true;
+  setTimeout(() => {
+    afterSection.classList.add("visible");
+    document.getElementById("continueBtn").classList.add("visible");
+  }, 800);
+}
+
+// ── Button listeners ──
+playBtn.addEventListener("click", togglePlay);
+prevBtn.addEventListener("click", prevTrack);
+nextBtn.addEventListener("click", nextTrack);
+
+// ── Start screen ──
+document.getElementById("startBtn").addEventListener("click", () => {
+  document.getElementById("startScreen").style.display = "none";
+  const content = document.getElementById("content");
+  content.style.display = "block";
+  requestAnimationFrame(() => { content.style.opacity = 1; });
+  document.body.style.backgroundImage = "url('background.png')";
+});
+</script>
+
+</body>
+</html>

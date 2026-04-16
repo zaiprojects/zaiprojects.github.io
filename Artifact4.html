@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Lexend&display=swap');
+
+    html, body {
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+        overflow-y: auto; 
+        height: 100%;
+        scroll-behavior: smooth;
+    }
+
+    body {
+        font-family: 'Lexend', sans-serif;
+        color: white;
+        background-color: black;
+        margin: 0;
+        overscroll-behavior: none;
+        text-shadow: 0 1px 16px rgba(0,0,0,1), 0 0 40px rgba(0,0,0,0.95);
+    }
+
+    #content {
+        opacity: 0;
+        transition: opacity 1.5s ease;
+        position: relative;
+        overflow: visible; 
+        width: 100%;
+    }
+
+    #breakTextWrapper {
+        display: grid;
+        grid-template-rows: 1fr;
+        transition: grid-template-rows 3s cubic-bezier(0.4, 0, 0.2, 1), opacity 2s ease;
+        overflow: hidden;
+    }
+
+    .condensed {
+        grid-template-rows: 0fr !important;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    body.underwater::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background: transparent;
+        pointer-events: none;
+        animation: waterDrift 6s ease-in-out infinite alternate;
+    }
+
+    @keyframes waterDrift {
+        0% { transform: translateY(0px); }
+        100% { transform: translateY(10px); }
+    }
+
+    .fall-char {
+        display: inline-block;
+        position: relative;
+        animation: fallDown 2.5s cubic-bezier(.08, .5, .15, 1) forwards;
+    }
+
+    @keyframes fallDown {
+        0%   { transform: translateY(0) rotate(0deg); opacity: 1; }
+        30%  { transform: translateY(-18px) rotate(-3deg); opacity: 0.9; }
+        100% { transform: translateY(1200px) translateX(calc((var(--rand) - 0.5) * 200px)) rotate(60deg); opacity: 0; }
+    }
+
+    .underwater::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 60, 110, 0.45);
+        pointer-events: none;
+        z-index: 10;
+        animation: underwaterFade 3s ease forwards;
+    }
+
+    @keyframes underwaterFade {
+        0%   { opacity: 0; }
+        100% { opacity: 1; }
+    }
+
+    .bubble {
+        position: fixed;
+        bottom: -50px;
+        z-index: 100;
+        background: rgba(255, 255, 255, 0.4);
+        border-radius: 50%;
+        pointer-events: none;
+        animation: rise 6s linear forwards;
+    }
+
+    @keyframes rise {
+        0% { transform: translateY(0) scale(1); opacity: 0.7; }
+        100% { transform: translateY(-120vh) scale(1.5); opacity: 0; }
+    }
+
+    .panic-text {
+        font-size: 70px;
+        font-weight: bold;
+        letter-spacing: 6px;
+        color: #a8e6f0;
+        text-shadow: 0 0 40px rgba(100, 210, 255, 0.6), 0 0 80px rgba(50, 170, 255, 0.3);
+        display: inline-block;
+    }
+
+    @keyframes riverFlow {
+        0%   { transform: translateX(0%); }
+        100% { transform: translateX(-33.33%); }
+    }
+
+    @keyframes shhhGrow {
+        0%   { font-size: 70px; opacity: 0; letter-spacing: 6px; }
+        20%  { opacity: 1; }
+        60%  { font-size: 110px; letter-spacing: 12px; }
+        100% { font-size: 130px; letter-spacing: 18px; opacity: 1; }
+    }
+
+    #myVideo {
+        position: fixed;
+        inset: 0;
+        width: 100vw;
+        height: 100vh;
+        object-fit: cover;
+        z-index: -1;
+    }
+
+    .water-flash {
+        position: fixed;
+        inset: 0;
+        background: radial-gradient(circle at 50% -20%, rgba(200, 240, 255, 0.9), rgba(0, 120, 200, 0.6), rgba(0, 0, 0, 0.95));
+        z-index: 50;
+        pointer-events: none;
+        animation: waterDrop 0.9s ease-in forwards;
+    }
+
+    @keyframes waterDrop {
+        0% { transform: translateY(-100%); opacity: 1; }
+        100% { transform: translateY(0%); opacity: 0; }
+    }
+
+    .glitch {
+      position: relative;
+      display: inline-block;
+      line-height: 1;
+    }
+
+    .glitch::before,
+    .glitch::after {
+      content: attr(data-text);
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      overflow: hidden;
+      color: white;
+    }
+
+    .glitch::before {
+      left: 2px;
+      text-shadow: -2px 0 pink;
+      animation: glitch1 2s infinite linear alternate-reverse;
+    }
+
+    .glitch::after {
+      left: -2px;
+      text-shadow: 2px 0 purple;
+      animation: glitch2 2s infinite linear alternate-reverse;
+    }
+
+    @keyframes glitch1 {
+      0%   { transform: translate(0); opacity: 1; }
+      20%  { transform: translate(-1px, 1px); opacity: 0.8; }
+      40%  { transform: translate(1px, -1px); opacity: 1; }
+      60%  { transform: translate(-1px, 1px); opacity: 0.85; }
+      100% { transform: translate(0); opacity: 1; }
+    }
+
+    @keyframes glitch2 {
+      0%   { transform: translate(0); }
+      25%  { transform: translate(1px, -1px); }
+      50%  { transform: translate(-1px, 1px); }
+      75%  { transform: translate(1px, 1px); }
+      100% { transform: translate(0); }
+    }
+</style>
+
+<body>
+    <div id="startScreen" style="text-align: center; margin-top: 200px;">
+        <button id="startBtn" class="void-button" style="font-family: 'Lexend'; font-size: 24px; padding: 10px 20px; cursor: pointer;">Dive.</button>
+        <p>"Blub blub blub"</p>
+    </div>
+
+    <div id="content" style="display: none;">
+        <video autoplay muted loop id="myVideo">
+            <source src="water.mp4" type="video/mp4">
+        </video>
+
+        <div style="margin: auto; width: 300px; padding-top: 50px; text-align: center;">
+            <span class="glitch" data-text="The Water" style="font-size:20px;">The Water</span><br><br>
+        </div>
+
+        <div id="afterSection" style="width: 80%; text-align: center; margin: auto">
+            <p style="font-size: 20px;">like a river.<br><br>like an enormous waterfall in the middle of nowhere.<br><br>or a faucet someone is leaning over while hating their reflection.<br><br> ooh, or maybe it's contained in plastic and shipped far, far away.<br><br></p>
+
+            <div id="breakTextWrapper">
+                <div style="min-height: 0;"> <p id="breakText" style="font-size: 40px; margin-bottom: 50px;">
+                    it's not really important what water this artifact is. water is fluid. like my identity. shout out to the fellow LGBTQIA+ people. water changes based on its surrounding. it fills whatever shape it's in. despite this, it still possess power and movement.<br><br>
+                    the water does not care. it does not want for love. it does not represent an existential dissonance pounding away at itself. it flows down. i envy the waters flow. in my existence i try to replicate the lack of shape. it can do feats greater than any living thing, but i repeat myself. i know i cannot be in the water for long. like all else, i would eventually be torn apart. from water, to water. drowning is one of the most common fears. just like the lights, you can be bathed in water. however, unlike the lights, the immersion of the body into water doesn't relax us. it brings that fear of death right to the front of our consciousness. those fearful moments are when meaning really starts to matter to us. we think about it abstractly, but as you sink below the surface, you realize just how real meaning can be. we are searching for meaning to appease that monster within us. it's one we can only really see when we are in grave danger, but it hangs over us all the time.<br><br>
+                    all of this is about happiness, right? why else would we looking for meaning? i'm not really interested in finding out some kind of “Truth” if that idea poisons my mind with hatred and despair. why else would we be looking for meaning? wouldn't it be better to just be like the water? just flow. no reactions. no more hatred. no more suffering. no more anything. that's where we all end up anyway right? why keep it at bay. why build dams if they are to collapse and let the torrent through? why? Why? WHY? <br><br><br><br><br>
+                    </p>
+                </div>
+            </div>
+
+            <div id="panicSection">
+                <div id="shhhContainer" style="overflow: hidden; width: 100%; height: 160px; position: relative; display: flex; align-items: center;">
+                    <b id="shhhText" class="panic-text" style="position: absolute; white-space: nowrap; will-change: transform;">SHHHHHHHHHHHHHH&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SHHHHHHHHHHHHHH&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SHHHHHHHHHHHHHH</b>
+                </div>
+                <br><br><br><br>
+            </div>
+
+            <p style="font-size: 40px">
+                yeah. that's why the water is here. it's a scary thought, for sure. sorry if that was upsetting, but in my defence, it also upset me. the ocean of death certainly does wait for us, and the dam will someday break. truthfully, i wish i could provide you with some solace after that. truthfully, i wish i could provide myself some solace in this moment. i don't have a reason for you. maybe it's just the fear talking, but i'm definitely happy that i haven't listened to the allure of the riverbed in a while. keep rowing friend.<br><br>
+
+                well, as a little refresher for you, here's a glass. the water also represents my social abilities. there is strength in being able to roll with the proverbial punches of everyday conversation. as someone who grew up extremely isolated from their piers, i never really developed the proper social barriers or habits. when i was thrust into the throw of socialization that is university life, i was worried that i wouldn't be able to keep up with my piers. and yet, just by allowing myself to continue flowing around each conversation, i have been able to thrive. i thank the river for that.<br><br>
+
+            </p>
+
+            <div id="nextButton" style="margin-top: 30px; text-align: center; display: none; padding-bottom: 100px;">
+                <button class="void-button" onclick="location.href='Artifact5.html'" style="font-family: 'Lexend'; font-size: 24px; padding: 10px 20px;">Continue.</button>
+            </div>
+        </div>
+    </div>
+
+    <audio id="bg" loop>
+        <source src="7-Wings Of Alchemy.mp3" type="audio/mpeg">
+    </audio>
+
+    <audio id="splash">
+        <source src="splash.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        const btn = document.getElementById("startBtn");
+        const content = document.getElementById("content");
+        const audio = document.getElementById("bg");
+        const wrapper = document.getElementById("breakTextWrapper");
+        const breakText = document.getElementById("breakText");
+
+        btn.addEventListener("click", () => {
+            document.getElementById("startScreen").style.display = "none";
+            content.style.display = "block";
+            setTimeout(() => { content.style.opacity = 1; }, 50);
+            document.getElementById("nextButton").style.display = "block";
+            audio.play();
+        });
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    triggerWaterPanic();
+                    observer.disconnect();
+                }
+            });
+        }, { threshold: 0.8 });
+
+        function triggerWaterPanic() {
+            const breakTextTop = document.getElementById("breakText").getBoundingClientRect().top + window.scrollY;
+
+            setTimeout(() => {
+                document.getElementById("splash").play();
+
+                const shhhText = document.getElementById("shhhText");
+                const container = document.getElementById("shhhContainer");
+
+                shhhText.style.animation = "shhhGrow 1.2s cubic-bezier(0.2, 0, 0.1, 1) forwards";
+
+                setTimeout(() => {
+                    shhhText.style.animation = "riverFlow 2.8s linear infinite";
+                    container.style.height = shhhText.offsetHeight + 20 + "px";
+
+                    setInterval(() => {
+                        if (Math.random() < 0.4) {
+                            shhhText.style.fontSize = (120 + Math.random() * 40) + "px";
+                            shhhText.style.color = Math.random() < 0.5 ? "#a8e6f0" : "#e0f7ff";
+                            setTimeout(() => {
+                                shhhText.style.fontSize = "130px";
+                                shhhText.style.color = "#a8e6f0";
+                            }, 500);
+                        }
+                    }, 1400);
+                }, 1200);
+                shatterText();
+
+                setTimeout(() => {
+                    switchToUnderwater();
+                    startBubbles();
+                }, 3);
+
+                setTimeout(() => {
+                    wrapper.classList.add("condensed");
+                }, 6);
+            }, 8);
+        }
+
+        function shatterText() {
+            const nodes = Array.from(breakText.childNodes);
+            breakText.innerHTML = "";
+            nodes.forEach(node => {
+                if (node.nodeType === Node.TEXT_NODE) {
+                    node.textContent.split("").forEach((char, i) => {
+                        const span = document.createElement("span");
+                        span.textContent = char === " " ? "\u00A0" : char;
+                        span.className = "fall-char";
+                        span.style.setProperty("--rand", Math.random());
+                        span.style.animationDelay = (i * 0.001) + "s"; 
+                        breakText.appendChild(span);
+                    });
+                } else {
+                    breakText.appendChild(node.cloneNode(true));
+                }
+            });
+        }
+
+        function switchToUnderwater() {
+            const video = document.getElementById("myVideo");
+            const source = video.querySelector("source");
+            const splash = document.createElement("div");
+            splash.className = "water-flash";
+            document.body.appendChild(splash);
+
+            setTimeout(() => {
+                source.src = "underwater.mp4";
+                video.load();
+                video.play();
+            }, 200);
+
+            setTimeout(() => splash.remove(), 900);
+            document.body.classList.add("underwater");
+        }
+
+        function startBubbles() {
+            setInterval(() => {
+                if (Math.random() < 0.7) createBubble();
+            }, 400);
+        }
+
+        function createBubble() {
+            const bubble = document.createElement("div");
+            bubble.className = "bubble";
+            const size = Math.random() * 15 + 5;
+            bubble.style.width = size + "px";
+            bubble.style.height = size + "px";
+            bubble.style.left = Math.random() * 100 + "vw";
+            document.body.appendChild(bubble);
+            setTimeout(() => bubble.remove(), 6000);
+        }
+
+        observer.observe(document.getElementById("panicSection"));
+    </script>
+</body>
+</html>

@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Lexend&display=swap');
+
+    body {
+      font-family: 'Lexend', sans-serif;
+      color: white;
+      background-color: black;
+      margin: 0;
+      overflow-x: hidden;
+      text-shadow: 0 1px 16px rgba(0,0,0,1), 0 0 40px rgba(0,0,0,0.95);
+    }
+
+    #content {
+      opacity: 0;
+      transition: opacity 1.5s ease;
+    }
+
+    .void-button {
+      font-family: 'Lexend', sans-serif;
+      font-size: 24px;
+      padding: 10px 20px;
+      background: white;
+      color: black;
+      border: none;
+      cursor: pointer;
+    }
+
+    #afterSection {
+      opacity: 0;
+      transition: opacity 2s ease;
+      margin: 80px auto;
+      width: 80%;
+      text-align: center;
+    }
+
+    #afterSection.visible {
+      opacity: 1;
+    }
+    
+    #myVideo {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -1;
+      opacity: 0.6;
+    }
+
+    .glitch {
+      position: relative;
+      display: inline-block;
+      line-height: 1;
+    }
+
+    .glitch::before,
+    .glitch::after {
+      content: attr(data-text);
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      overflow: hidden;
+      color: white;
+    }
+
+    .glitch::before {
+      left: 2px;
+      text-shadow: -2px 0 pink;
+      animation: glitch1 2s infinite linear alternate-reverse;
+    }
+
+    .glitch::after {
+      left: -2px;
+      text-shadow: 2px 0 purple;
+      animation: glitch2 2s infinite linear alternate-reverse;
+    }
+
+    @keyframes glitch1 {
+      0%   { transform: translate(0); opacity: 1; }
+      20%  { transform: translate(-1px, 1px); opacity: 0.8; }
+      40%  { transform: translate(1px, -1px); opacity: 1; }
+      60%  { transform: translate(-1px, 1px); opacity: 0.85; }
+      100% { transform: translate(0); opacity: 1; }
+    }
+
+    @keyframes glitch2 {
+      0%   { transform: translate(0); }
+      25%  { transform: translate(1px, -1px); }
+      50%  { transform: translate(-1px, 1px); }
+      75%  { transform: translate(1px, 1px); }
+      100% { transform: translate(0); }
+    }
+
+    @keyframes flashAnim {
+      0%   { background: black; color: white; }
+      20%  { background: white; color: black; }
+      40%  { background: black; color: white; }
+      60%  { background: white; color: black; }
+      100% { background: black; color: white; }
+    }
+
+    .flash {
+      animation: flashAnim 0.08s linear 10;
+    }
+
+    .panic-text {
+      transition: transform 1.2s cubic-bezier(.2,.8,.2,1), opacity 0.6s ease;
+      display: inline-block;
+      font-size: 40px;
+      font-weight: bold;
+      letter-spacing: 2px;
+    }
+
+    .panic-active .panic-text {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(12);
+      width: 200vw;
+      text-align: center;
+      letter-spacing: 20px;
+      z-index: 20;
+      filter: blur(2px);
+      pointer-events: none;
+    }
+
+    .panic-active {
+      animation: shake 0.1s infinite;
+    }
+
+    .panic-fade .panic-text {
+      opacity: 0;
+    }
+
+    @keyframes shake {
+      0% { transform: translate(0,0); }
+      50% { transform: translate(1px,-1px); }
+      100% { transform: translate(0,0); }
+    }
+
+    #darkOverlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      opacity: 0;
+      z-index: 10;
+      transition: opacity 1s ease;
+    }
+
+    #darkOverlay.active {
+      opacity: 1;
+    }
+
+    .dark-text {
+      position: relative;
+      color: white;
+      z-index: 1;
+    }
+
+    .dark-active .dark-text {
+      mask-image: radial-gradient(circle at var(--x) var(--y),
+        black 0px,
+        black 120px,
+        transparent 180px
+      );
+      -webkit-mask-image: radial-gradient(circle at var(--x) var(--y),
+        black 0px,
+        black 120px,
+        transparent 180px
+      );
+    }
+
+    .dark-entity {
+      position: absolute;
+      left: 0;
+      top: 0;
+      color: rgb(40, 0, 49);
+      font-size: 28px;
+      pointer-events: none;
+      z-index: 15;
+
+      opacity: 0.9;
+      transform: rotate(var(--rot));
+      transition: opacity 0.25s ease;
+    }
+    .dark-entity.show {
+      opacity: 0.9;
+    }
+
+    .dark-entity.fade {
+      opacity: 0;
+    }
+  </style>
+</head>
+
+<body>
+<div id="darkOverlay"></div>
+
+<div id="startScreen" style="text-align:center; margin-top:200px;">
+  <p style="font-size: 100px">LEVEL 2 - Sense</p>
+  <button id="startBtn" class="void-button">Illuminate.</button>
+  <p>"My vision is degenerating so fast. It's like the opposite of your life flashing before your eyes."</p>
+</div>
+
+<div id="content" style="display:none; text-align:center; margin-top:80px;">
+  
+  <video autoplay muted loop id="myVideo">
+    <source src="lights.mp4" type="video/mp4">
+  </video> 
+
+  <div>
+    <span class="glitch" data-text="The Lights" style="font-size:20px;">The Lights</span><br><br>
+    <p>like fairy lights.<br><br> like fireworks on a summer evening.<br><br>or maybe lamp posts on a suburban street.<br><br>ooh or maybe christmas lights!<br><br></p>
+  </div>
+
+  <div id="afterSection">
+    <p style="font-size: 40px">
+      it's not really important which light this artifact is. it's all electromagnetic energy. its all heat. have you felt that heat? its nice. the warmth surrounds you like the universe is bathing you in its power. but it's not really scary. feels like comfort. feels like understanding. when you just sit outside and listen. ironically, when you stop looking around, the light becomes a more comforting force. in those moments, it's not just a utility, its a peace that fills the air. light is how most people take in information. we make machines to beam specific light right into our brains. our eyes are so close to the brain it's hard to differentiate them biologically. we learn through light. we are entertained by light. light makes people live, and light makes people die.<br><br>
+
+      that is the moment i feel the most understood. that is why the light is one of these artifacts. it's the thing that understands me better than any other human. religion is a tricky subject for me. i often rely on the spiritual experiences brought to me by light and nature. i grew up in the church. hymns and bible verses were comfort to me. in some ways they still are. my belief often falters. but my belief returns in those times. those times trigger both a godly and human comfort those times sitting outside among the man made light sources. i have a constant powerlessness in my chest, but the light reminds me of what humanity does. the light is hope, at least for some. we are lost flesh of atoms on atoms among nothing. but that dark nothing is defeatable in some ways. we have bent the universe to our will. we have created beasts that glow as bright as stars when close to our face. they do not burn. they just keep glowing. the night is our evolutionary enemy. the winter is our evolutionary enemy. we have defeated them with our intellect. we desperately put together materials and substances until something works. through that determination we have conquered the night. not in its entirety, mind you. like me, humans cannot commit to any single ideal forever. but, for now, we have the power and grit to banish the cold. and we choose to. for now.<br><br><br><br><br><br><br><br><br><br><br><br>
+    </p>
+
+      <div id="panicSection">
+        <b class="panic-text">
+          AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        </b>
+      </div>
+
+      <p style="font-size: 40px">
+      fight back. i need to fight back. please don't let the darkness fill my arteries like a spiderweb. it will clog my bodily functions. it causes my muscles to seize and tremor. i hate it. im afraid of being dragged back down into the mud. i've been there before many times. the tale is going to repeat. i knew that i would be back here. why did i ever think that i escaped. i cannot climb out with a ladder, vessel, or wings. nothing is working. the dark settles in as the gravity of the mind causes it to full the space i leave open. i need the light to stay around me. please i need the light. i need to fight back. fight back.<br><br>
+
+      we scream. like a child lost in the dark. we see the nothingness and we reject it. that scream is the same as what the light provides me. i rebel against the creeping meaninglessness. i scream. i cry. i try not to forget what it means to care about things and people. its a raw, almost painful, sensual grounding. psychology teaches us humans about grounding. it's such a tragedy that one of the best ways to calm our mind is to silence it. we cannot make noise and be comforted. we need to accept the nothingness without accepting the darkness. that's what the light is for. whether my heart is pumping from physical exercise or calm from restful sounds, i am reassured. in the light i know that i am a body. i am somewhere. the universe is assuring me of my existence. and often, that is enough. just knowing i am is enough. the light is a reminder for me.<br><br>
+      </p>
+
+    <div style="margin-top:30px;">
+      <button class="void-button" onclick="location.href='Artifact4.html'">
+        Continue.
+      </button>
+    </div>
+  </div>
+</div>
+
+<audio id="bg" loop>
+  <source src="Royalty.mp3" type="audio/mpeg">
+</audio>
+
+<audio id="shatter">
+  <source src="shatter.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+const btn = document.getElementById("startBtn");
+const content = document.getElementById("content");
+const afterSection = document.getElementById("afterSection");
+const audio = document.getElementById("bg");
+const panicSection = document.getElementById("panicSection");
+const overlay = document.getElementById("darkOverlay");
+const video = document.getElementById("myVideo");
+const shatter = document.getElementById("shatter");
+
+const darkPhrases = [
+  "fear not life, fear the Omnil",
+  "pressure will only build",
+  "you have to trust the darkness",
+  "you are remembered",
+  "light is not safety",
+  "this place is not empty",
+  "keep moving"
+];
+
+let entities = [];
+
+// Store mouse position in VIEWPORT coordinates
+let mouseViewX = window.innerWidth / 2;
+let mouseViewY = window.innerHeight / 2;
+
+function spawnDarkEntity() {
+  const el = document.createElement("div");
+  el.className = "dark-entity";
+
+  const text = darkPhrases[Math.floor(Math.random() * darkPhrases.length)];
+  el.textContent = text;
+
+  // Position entities in PAGE coordinates (absolute)
+  const y = window.scrollY + Math.random() * window.innerHeight;
+  const x = Math.random() * window.innerWidth;
+
+  const rot = (Math.random() * 10 - 5) + "deg";
+
+  el.style.top = `${y}px`;
+  el.style.left = `${x}px`;
+  el.style.setProperty("--rot", rot);
+
+  document.body.appendChild(el);
+  entities.push(el);
+}
+
+btn.addEventListener("click", () => {
+  document.getElementById("startScreen").style.display = "none";
+
+  content.style.display = "block";
+  requestAnimationFrame(() => content.style.opacity = 1);
+
+  audio.volume = 0;
+  audio.play().catch(() => {});
+
+  let v = 0;
+  const fade = setInterval(() => {
+    v = Math.min(v + 0.02, 1);
+    audio.volume = v;
+    if (v >= 1) clearInterval(fade);
+  }, 80);
+
+  setTimeout(() => afterSection.classList.add("visible"), 2000);
+});
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      triggerPanic();
+      observer.disconnect();
+    }
+  });
+}, { threshold: 0.6 });
+
+observer.observe(panicSection);
+
+function triggerPanic() {
+  document.body.classList.add("flash");
+  panicSection.classList.add("panic-active");
+
+  video.style.opacity = "1";
+
+  setTimeout(() => shatter.play().catch(() => {}), 120);
+
+  setTimeout(() => {
+    panicSection.classList.add("panic-fade");
+  }, 900);
+
+  setTimeout(() => {
+    video.style.opacity = "0";
+    video.pause();
+    startDarkness();
+  }, 800);
+
+  setTimeout(() => {
+    panicSection.style.display = "none";
+  }, 2000);
+}
+
+function startDarkness() {
+  function updateEntities() {
+    for (const el of entities) {
+      // getBoundingClientRect() returns VIEWPORT coordinates — matches mouseViewX/Y directly
+      const rect = el.getBoundingClientRect();
+      const ex = rect.left + rect.width / 2;
+      const ey = rect.top + rect.height / 2;
+
+      const dx = ex - mouseViewX;
+      const dy = ey - mouseViewY;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+
+      const fadeRadius = 180;
+
+      if (dist < fadeRadius) {
+        el.style.opacity = "0";
+      } else if (dist < fadeRadius + 120) {
+        el.style.opacity = String((dist - fadeRadius) / 120);
+      } else {
+        el.style.opacity = "0.9";
+      }
+    }
+
+    requestAnimationFrame(updateEntities);
+  }
+
+  updateEntities();
+
+  document.body.classList.add("dark-active");
+  overlay.classList.add("active");
+
+  document.body.style.filter = "invert(1)";
+  setTimeout(() => document.body.style.filter = "none", 120);
+
+  let currentX = mouseViewX;
+  let currentY = mouseViewY;
+  let flickerTime = 0;
+
+  // Track mouse in viewport coordinates
+  document.addEventListener("mousemove", (e) => {
+    mouseViewX = e.clientX;
+    mouseViewY = e.clientY;
+  });
+
+  setInterval(() => {
+    if (Math.random() < 0.7) spawnDarkEntity();
+  }, 1800);
+
+  function animate() {
+    // Smooth lantern follows mouse (both in viewport coords)
+    currentX += (mouseViewX - currentX) * 0.12;
+    currentY += (mouseViewY - currentY) * 0.12;
+
+    flickerTime += 0.02;
+
+    const flicker =
+      Math.sin(flickerTime) * 4 +
+      Math.sin(flickerTime * 1.618) * 2;
+
+    const size = 120 + flicker;
+
+    overlay.style.background = `
+      radial-gradient(circle at ${currentX}px ${currentY}px,
+        rgba(255, 210, 140, 0.22) 0px,
+        rgba(255, 160, 80, 0.12) ${size * 0.6}px,
+        transparent ${size}px,
+        rgba(0,0,0,0.98) ${size * 2}px
+      )
+    `;
+
+    requestAnimationFrame(animate);
+  }
+  animate();
+}
+</script>
+</body>
+</html>

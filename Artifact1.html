@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Lexend&display=swap');
+
+    body {
+      font-family: 'Lexend', sans-serif;
+      color: white;
+      background-color: black;
+      background-attachment: fixed;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      margin: 0;
+      overflow-x: hidden;
+      text-shadow: 0 1px 16px rgba(0,0,0,1), 0 0 40px rgba(0,0,0,0.95);
+    }
+
+    #content {
+      opacity: 0;
+      transition: opacity 1.5s ease;
+      position: relative;
+      z-index: 2;
+    }
+
+    .void-button {
+      font-family: 'Lexend', sans-serif;
+      font-size: 24px;
+      padding: 10px 20px;
+      background: white;
+      color: black;
+      border: none;
+      cursor: pointer;
+    }
+
+    #poemArea {
+      position: relative;
+      z-index: 2;
+      min-height: 1400px;
+      padding-top: 80px;
+    }
+
+    .hat {
+      position: absolute;
+      opacity: 0.75;
+      pointer-events: none;
+      z-index: 1;
+      user-select: none;
+    }
+
+    #afterSection {
+      opacity: 0;
+      margin: auto;
+      width: 60%;
+      text-align: left;
+      transition: opacity 2s ease;
+      padding-bottom: 120px;
+    }
+
+    #afterSection.visible {
+      opacity: 1;
+    }
+
+    .glitch {
+      position: relative;
+      display: inline-block;
+      line-height: 1;
+    }
+    .glitch::before,
+    .glitch::after {
+      content: attr(data-text);
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      overflow: hidden;
+      color: white;
+    }
+    .glitch::before {
+      left: 2px;
+      text-shadow: -2px 0 pink;
+      animation: glitch1 2s infinite linear alternate-reverse;
+    }
+    .glitch::after {
+      left: -2px;
+      text-shadow: 2px 0 purple;
+      animation: glitch2 2s infinite linear alternate-reverse;
+    }
+    @keyframes glitch1 {
+      0%   { transform: translate(0);         opacity: 1; }
+      20%  { transform: translate(-2px, 1px); opacity: 0.8; }
+      40%  { transform: translate(2px, -1px); opacity: 1; }
+      60%  { transform: translate(-1px, 2px); opacity: 0.7; }
+      100% { transform: translate(0);         opacity: 1; }
+    }
+    @keyframes glitch2 {
+      0%   { transform: translate(0); }
+      25%  { transform: translate(2px, -1px); }
+      50%  { transform: translate(-2px, 1px); }
+      75%  { transform: translate(1px, 2px); }
+      100% { transform: translate(0); }
+    }
+  </style>
+</head>
+
+<body>
+
+<div id="startScreen" style="text-align:center; margin-top:200px;">
+  <p style="font-size: 100px">LEVEL 1 - Art</p>
+  <button id="startBtn" class="void-button">Wear.</button>
+  <p>"You mean you can't take less," said the Hatter: "It's very easy to take more than nothing."</p>
+</div>
+
+<div id="content" style="display:none;">
+
+  <div id="poemArea" style="margin:auto; width:95%; text-align:center; font-size:70px;">
+    <p>
+      <span class="glitch" data-text="THE MAD HATTER" style="font-size:20px;">THE MAD HATTER</span><br><br>
+
+      Oh, how they forsake you<br><br><br><br>
+      They call you dumb and fool<br><br><br><br>
+      I, I see, see straight through<br><br><br><br>
+      The sickly sickled gruel<br><br><br><br>
+
+      Laugh at the man, nothing in his brain<br>
+      Laugh at the man, he's completely insane<br><br><br><br>
+
+      But I know the truth<br><br><br><br>
+      You are the only casting in your mind<br><br><br><br>
+      I speak to a mirror uncouth<br><br><br><br>
+      Because you and I are of the same kind<br><br><br><br>
+
+      HAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+
+    </p>
+  </div>
+
+  <div id="afterSection">
+    <div style="width:100%; margin:80px auto; font-size:18px; line-height:1.6;">
+      The Mad Hatter is a poem I wrote last summer. I wrote it into my personal journal between entries. The original entry is more cohesive, but still clearly separated into three different sections, each with their own slightly different rhyme schemes. The poem ends with a single extended laugh. The "A"s in the laugh grow larger and larger, but also slowly morph into the shape of a hat. For the sake of translating it into digital form, I have made some adjustments to its presentation. It was written in one sitting, and I wrote it exclusively for the purpose of expressing how I felt at the time. However, after I wrote it, I read it over and over. The more I reflected on it, the more I realized it described my worldview better than I had ever done before. Of course, the poem is not a clear summarization. In fact, I would not be surprised if someone read it and took completely the wrong message from it, but as I tried to clarify it in my head, every correction, adjustment, and explanation just seemed to move further away from both comprehensive communication of my ideas and proper expression.<br><br>
+
+      This poem holds significance to me for a multitude of reasons. At the time of writing, I was in a position where I understood my outlook on life, my personal philosophy, my identity, and yet, I still felt empty. I've decided to include this poem as one of my artifacts because I believe it is the most succinct, yet accurate, description of my emotional state when confronting the question of meaning. It tackles the loneliness that comes from being unable to commit to a certain position. It tackles the insanity brought about by temporary ego deaths. It tackles the emptiness of the void.<br><br>
+
+      I believe that my worldview is defined by shifting. As humans, we are consistent beings who inhabit spectres known as ideas for as long as we see fit, and then we discard them and begin to look for another. I believe most people find their answer to the meaning question by taking one of these ideas, these spectres, and inhabiting it for a long period of time. In doing this, they eliminate their ability to change their mind, the slice of thousands of potentialities from their future, and, in return, they are given the opportunity to feel happy. As I wrote The Mad Hatter, I expressed my frustration with being an onlooker into this system. I have an intense, emotional fear of losing possibilities. Whenever the thought of making a choice that will eliminate certain future events from happening in my life, I shudder. I cannot commit to believing in any of these beautiful ideas that come so naturally to every other human I see. I cannot engage with society as a person who holds permanent beliefs. I cannot be normal. This is the pain I express through The Mad Hatter.<br><br>
+
+      So far, this explanation has been fairly negative, but I do not see this artifact and think only of the negativity it brings. If anything, I see the ability for me to share my ideas with other people. Connecting with other people, even if only superficially, is a way to feel comfort in the frigidity of meaninglessness. Additionally, this poem represents a kind of power that I derive from said meaninglessness. I believe most fears are driven by a contrasting desire, and most desires are driven by contrasting fears. As mentioned, I am deathly afraid of limiting my options, but the other side of that coin is that I love participating in vastly different things. Because my worldview doesn't nail itself down, (trust me I understand the irony in writing that) I am able to more easily inhabit the ideas of others. It's very rare for me to meet somebody who I cannot understand and empathize with. My mind is not only open to other idea's, it is empty. It actively hungers to be filled with thoughts and beliefs, even if they are only temporary. I find I can quite easily morph my mind to fill whatever role is necessary, because I keep my options open.<br><br>
+    </div>
+
+    <div id="nextButton" style="margin-top: 30px; text-align: center; display: none;">
+				<button class="void-button" onclick="location.href='Artifact2.html'">
+					Continue.
+				</button>
+			</div>
+  </div>
+</div>
+
+<audio id="bg" loop>
+  <source src="TheMadHatter.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+const btn = document.getElementById("startBtn");
+const audio = document.getElementById("bg");
+const content = document.getElementById("content");
+const poemArea = document.getElementById("poemArea");
+const afterSection = document.getElementById("afterSection");
+
+let spawnedCount = 0;
+const maxHats = 600;
+let started = false;
+let afterShown = false;
+
+const placedIndices = new Set();
+
+function spawnHat(index) {
+  if (placedIndices.has(index)) return;
+  placedIndices.add(index);
+
+  const el = document.createElement("div");
+  el.className = "hat";
+
+  const isA = Math.random() < 0.15;
+
+  if (isA) {
+    el.textContent = "A";
+    el.style.fontSize = (20 + Math.random() * 80) + "px";
+  } else {
+    const img = document.createElement("img");
+    img.src = "hat.png";
+    img.style.width = (30 + Math.random() * 90) + "px";
+    el.appendChild(img);
+  }
+
+  const areaTop = poemArea.offsetTop;
+  const areaLeft = poemArea.offsetLeft;
+  const areaW = poemArea.offsetWidth;
+  const areaH = poemArea.offsetHeight;
+
+  const x = areaLeft + Math.random() * areaW;
+  const y = areaTop + Math.random() * areaH;
+
+  el.style.left = x + "px";
+  el.style.top = y + "px";
+  el.style.transform = `rotate(${Math.random() * 360}deg)`;
+
+  el.style.opacity = "0";
+  el.style.transition = "opacity 0.4s ease";
+  document.body.appendChild(el);
+
+  requestAnimationFrame(() => {
+    el.style.opacity = "0.75";
+  });
+}
+
+function onScroll() {
+  if (!started) return;
+
+  const areaTop = poemArea.offsetTop;
+  const areaH = poemArea.offsetHeight;
+  const viewBottom = window.scrollY + window.innerHeight;
+
+  const scrollProgress = Math.min(Math.max((viewBottom - areaTop) / areaH, 0), 1);
+
+  const targetCount = Math.floor(Math.pow(scrollProgress, 4.5) * maxHats);
+
+  for (let i = spawnedCount; i < targetCount; i++) {
+    spawnHat(i);
+    spawnedCount = i + 1;
+  }
+
+  // Reveal afterSection once poem is fully scrolled past
+  if (scrollProgress >= 1 && !afterShown) {
+    afterShown = true;
+    // Small delay for drama
+    setTimeout(() => {
+      afterSection.classList.add("visible");
+    }, 600);
+  }
+}
+
+btn.addEventListener("click", () => {
+  document.getElementById("nextButton").style.display = "block";
+  document.getElementById("startScreen").style.display = "none";
+  document.body.style.backgroundImage = "url('background1.png')";
+
+  content.style.display = "block";
+  requestAnimationFrame(() => {
+    content.style.opacity = 1;
+  });
+
+  audio.volume = 0;
+  audio.play().catch(() => {}); // handle autoplay block gracefully
+
+  let v = 0;
+  const fade = setInterval(() => {
+    v = Math.min(v + 0.02, 1);
+    audio.volume = v;
+    if (v >= 1) clearInterval(fade);
+  }, 80);
+
+  setTimeout(() => {
+    started = true;
+    // Trigger once in case user hasn't scrolled yet (top of page counts too)
+    onScroll();
+  }, 400);
+});
+
+window.addEventListener("scroll", onScroll, { passive: true });
+</script>
+
+</body>
+</html>
